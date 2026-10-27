@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Healthcare Appointment and Lab Pipeline</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="bar">
+  <span class="mark">Appointment &amp; Lab Pipeline</span>
+  <nav aria-label="Views" id="tabs">
+    <button data-view="book" aria-current="page">Book a visit</button>
+    <button data-view="race">Concurrency test</button>
+    <button data-view="lab">Lab results</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- Patient portal -->
+<section id="book" class="view">
+  <h1>Book an appointment</h1>
+  <p class="intro">Your request is queued and answered at once. A background worker then confirms the slot and checks your insurance.</p>
+
+  <div class="two">
+    <form id="bookForm" autocomplete="off">
+      <label>Doctor
+        <select id="doctor" required></select>
+      </label>
+      <label>Time slot
+        <select id="slot" required></select>
+      </label>
+      <label>Your name
+        <input id="name" required maxlength="80" value="Asha Menon">
+      </label>
+      <label>Email
+        <input id="email" type="email" required value="asha@example.com">
+      </label>
+      <label>Insurance id
+        <input id="ins" required maxlength="40" value="INS-20481">
+        <small>Try <b>INV-1</b> to see the insurer refuse, or <b>SLOW-1</b> for a slow insurer.</small>
+      </label>
+      <label>Reason for visit
+        <input id="reason" maxlength="200" value="Routine check-up">
+      </label>
+      <button class="btn" type="submit">Request appointment</button>
+    </form>
+
+    <div class="panel dark" aria-live="polite">
+      <h2>What the server says</h2>
+      <p id="bookEmpty" class="muted">Send a request to see the response and the background progress here.</p>
+      <ol id="bookLog" class="log"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- Race -->
+<section id="race" class="view" hidden>
+  <h1>Many patients, one slot</h1>
+  <p class="intro">Fires simultaneous requests for the same slot. Every request is accepted instantly. Optimistic locking lets exactly one reach the database.</p>
+
+  <div class="controls">
+    <label>Doctor <select id="raceDoctor"></select></label>
+    <label>Requests <input id="raceCount" type="number" min="2" max="200" value="30"></label>
+    <button class="btn" id="raceGo" type="button">Send them all at once</button>
+  </div>
+
+  <div class="tiles" id="raceTiles">
+    <div><b data-k="QUEUED">0</b><span>Queued</span></div>
+    <div><b data-k="PROCESSING">0</b><span>Processing</span></div>
+    <div class="good"><b data-k="CONFIRMED">0</b><span>Confirmed</span></div>
+    <div class="bad"><b data-k="REJECTED">0</b><span>Rejected</span></div>
+  </div>
+  <p id="raceNote" class="muted">Waiting for a run.</p>
+  <ul id="raceList" class="rows"></ul>
+</section>
+
+<!-- Lab -->
+<section id="lab" class="view" hidden>
+  <h1>Lab result pipeline</h1>
+  <p class="intro">The nightly job reads an analyzer file, validates and triages each row, and commits in chunks of 50. Bad rows are skipped and logged. Critical values go out as alerts on a priority topic.</p>
+
+  <div class="controls">
+    <button class="btn" id="labGo" type="button">Run the batch on a new analyzer feed</button>
+    <label class="file">Or upload a CSV <input id="labFile" type="file" accept=".csv"></label>
+    <span id="labState" class="muted"></span>
+  </div>
+
+  <div class="tiles" id="labTiles">
+    <div><b data-k="read">0</b><span>Rows read</span></div>
+    <div class="good"><b data-k="written">0</b><span>Saved</span></div>
+    <div class="bad"><b data-k="skipped">0</b><span>Skipped</span></div>
+    <div><b data-k="commits">0</b><span>Chunk commits</span></div>
+  </div>
+
+  <div class="two">
+    <div>
+      <h2>Results <select id="sevFilter" aria-label="Filter by severity">
+        <option value="">All</option><option>CRITICAL</option><option>ABNORMAL</option><option>NORMAL</option></select></h2>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr><th>Patient</th><th>Test</th><th>Value</th><th>Range</th><th>Result</th></tr></thead>
+          <tbody id="labRows"></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h2>Critical alerts <small id="alertTotal" class="muted"></small></h2>
+      <ul id="alertList" class="rows"></ul>
+      <h2>Skipped rows</h2>
+      <ul id="skipList" class="rows mono"></ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <span>Spring Boot · ActiveMQ · Spring Batch · JPA · SOAP</span>
+  <a href="/ws/insurance.wsdl">Insurance WSDL</a>
+  <a href="/h2-console">H2 console</a>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

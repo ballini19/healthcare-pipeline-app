@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: healthcare-pipeline
+  datasource:
+    url: jdbc:h2:mem:hospital;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false&broker.useJmx=false
+  jms:
+    listener:
+      concurrency: 8
+      max-concurrency: 8
+
+lab:
+  chunk-size: 50
+  nightly-cron: "0 0 2 * * *"

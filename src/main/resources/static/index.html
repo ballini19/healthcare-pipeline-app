@@ -12,6 +12,7 @@
   <span class="mark">Appointment &amp; Lab Pipeline</span>
   <nav aria-label="Views" id="tabs">
     <button data-view="book" aria-current="page">Book a visit</button>
+    <button data-view="appts">Appointments</button>
     <button data-view="race">Concurrency test</button>
     <button data-view="lab">Lab results</button>
   </nav>
@@ -49,10 +50,29 @@
     </form>
 
     <div class="panel dark" aria-live="polite">
-      <h2>What the server says</h2>
-      <p id="bookEmpty" class="muted">Send a request to see the response and the background progress here.</p>
-      <ol id="bookLog" class="log"></ol>
+      <h2 id="resTitle">Your confirmation</h2>
+      <p id="bookEmpty" class="muted">Fill in the form and request an appointment. Your confirmation will appear here.</p>
+      <div id="resBody" hidden>
+        <p id="resWhen" class="when"></p>
+        <p id="resRef" class="muted"></p>
+      </div>
+      <details id="tech" hidden>
+        <summary>Technical details</summary>
+        <ol id="bookLog" class="log"></ol>
+      </details>
     </div>
+  </div>
+</section>
+
+<!-- All appointments -->
+<section id="appts" class="view" hidden>
+  <h1>Booked appointments</h1>
+  <p class="intro">Every confirmed appointment, newest first. <span id="apptCount" class="muted"></span></p>
+  <div class="scroll tall">
+    <table class="tbl">
+      <thead><tr><th>Reference</th><th>Patient</th><th>Doctor</th><th>When</th><th>Reason</th></tr></thead>
+      <tbody id="apptRows"></tbody>
+    </table>
   </div>
 </section>
 

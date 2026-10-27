@@ -118,3 +118,9 @@ h2 select { width: auto; font-size: 15px; padding: 6px 10px; }
   .two { grid-template-columns: 1fr; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
 }
+
+.when { font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -.02em; line-height: 1.2; color: var(--accent-dark); margin-top: 6px; }
+#resBody .muted { margin-top: 10px; }
+details { margin-top: 28px; color: #bccbc4; font-size: 15px; }
+summary { cursor: pointer; }
+.scroll.tall { max-height: 640px; margin-top: 32px; }

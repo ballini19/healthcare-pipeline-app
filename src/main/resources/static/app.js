@@ -32,6 +32,7 @@
       b.setAttribute('aria-current', 'page');
       document.querySelectorAll('.view').forEach(function (v) { v.hidden = v.id !== b.dataset.view; });
       if (b.dataset.view === 'lab') refreshLab();
+      if (b.dataset.view === 'appts') loadAppts();
     });
   });
 
@@ -67,6 +68,7 @@
     e.preventDefault();
     if (!$('slot').value) return;
     var log = $('bookLog'); log.textContent = ''; $('bookEmpty').hidden = true;
+    $('resBody').hidden = true; $('tech').hidden = false; $('resTitle').textContent = 'Booking your appointment...';
     clearInterval(bookPoll);
     var t0 = performance.now();
     api('/api/appointments', {
@@ -84,6 +86,7 @@
         log.appendChild(li);
         followStatus(r.body.referenceId);
       } else {
+        $('resTitle').textContent = 'Please check the form';
         li.appendChild(el('span', 'bad', 'HTTP ' + r.status));
         li.appendChild(el('code', '', (r.body && (r.body.detail || r.body.message || r.body.title)) || 'Request refused'));
         log.appendChild(li);
@@ -103,6 +106,12 @@
         $('bookLog').appendChild(li);
         if (r.body.state === 'CONFIRMED' || r.body.state === 'REJECTED') {
           clearInterval(bookPoll); loadSlots();
+          var ok = r.body.state === 'CONFIRMED';
+          $('resTitle').textContent = ok ? 'Appointment booked' : 'Could not book this slot';
+          $('resWhen').textContent = ok ? r.body.message.replace('Appointment confirmed for ', '') : r.body.message;
+          $('resRef').textContent = ok ? 'Reference ' + ref : '';
+          $('resBody').hidden = false;
+          if (ok) loadAppts();
         }
       });
     }
@@ -142,6 +151,7 @@
       });
       if (c.QUEUED + c.PROCESSING === 0 && c.CONFIRMED + c.REJECTED > 0) {
         clearInterval(timers.race);
+        loadAppts();
         $('raceNote').textContent = c.CONFIRMED + ' booking, ' + c.REJECTED + ' rejected. No double booking.';
         loadSlots();
       }
@@ -198,6 +208,21 @@
           ' (normal ' + a.refLow + ' to ' + a.refHigh + ')'));
         list.appendChild(li);
       });
+    });
+  }
+
+  function loadAppts() {
+    api('/api/appointments?limit=100').then(function (r) {
+      var rows = r.body || [], body = $('apptRows'); body.textContent = '';
+      $('apptCount').textContent = rows.length ? rows.length + ' in total.' : '';
+      rows.forEach(function (a) {
+        var tr = el('tr');
+        [a.referenceId, a.patientName, a.slot.doctor.name, when(a.slot.startTime), a.reason || ''].forEach(function (t) {
+          tr.appendChild(el('td', '', t));
+        });
+        body.appendChild(tr);
+      });
+      if (!rows.length) { var tr = el('tr'); var td = el('td', 'muted', 'Nothing booked yet.'); td.colSpan = 5; tr.appendChild(td); body.appendChild(tr); }
     });
   }
 

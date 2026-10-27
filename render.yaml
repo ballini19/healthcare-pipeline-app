@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: healthcare-pipeline
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/stats

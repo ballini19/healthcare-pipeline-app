@@ -21,6 +21,16 @@ mvn test                                              # concurrency and batch te
 
 Insurance ids starting with `INV` are refused by the SOAP service; ids starting with `SLOW` answer after 1.5 s.
 
+## Sample lab file
+
+`src/main/resources/static/sample/lab_feed_sample.csv` is a 305-row analyzer feed: 300 valid rows (some abnormal, some critical) and 5 deliberately bad rows (non-numeric value, missing patient id, unknown test type, truncated line, empty reference range). Upload it on the Lab results screen, or:
+
+```bash
+curl -X POST -F file=@src/main/resources/static/sample/lab_feed_sample.csv http://localhost:8080/api/lab/run
+```
+
+Expected result: 305 read, 300 saved, 5 skipped, 7 chunk commits.
+
 ## Key endpoints
 
 - `POST /api/appointments` returns 202 with a reference id; `GET /api/appointments/{ref}` shows progress

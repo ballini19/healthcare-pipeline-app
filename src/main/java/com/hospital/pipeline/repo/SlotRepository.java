@@ -14,4 +14,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
             Long doctorId, SlotStatus status, LocalDateTime after);
 
     long countByStatus(SlotStatus status);
+
+    long countByDoctorIdAndStatus(Long doctorId, SlotStatus status);
 }

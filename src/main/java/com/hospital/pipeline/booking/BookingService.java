@@ -32,7 +32,9 @@ public class BookingService {
         }
         slot.status = SlotStatus.BOOKED;
         slots.saveAndFlush(slot);
-        return appointments.save(new Appointment(m.referenceId(), m.patientName(), m.patientEmail(),
-                m.insuranceId(), m.reason(), slot));
+        Appointment appointment = new Appointment(m.referenceId(), m.patientName(), m.patientEmail(),
+                m.insuranceId(), m.reason(), slot);
+        appointment.patientUsername = m.patientUsername();
+        return appointments.save(appointment);
     }
 }

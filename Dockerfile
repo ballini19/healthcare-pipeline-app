@@ -8,6 +8,7 @@ RUN mvn -q -B -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/healthcare-pipeline-1.0.0.jar app.jar
+COPY password.txt password.txt
 ENV JAVA_TOOL_OPTIONS="-Xmx200m -Xss512k -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=48m -XX:TieredStopAtLevel=1 -XX:MaxDirectMemorySize=32m"
 EXPOSE 8080
 CMD ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]

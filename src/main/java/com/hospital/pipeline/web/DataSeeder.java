@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /** Three doctors with half-hour slots for the next three days, so there is something to book. */
 @Component
+@Order(1)
 public class DataSeeder implements ApplicationRunner {
 
     private final DoctorRepository doctors;

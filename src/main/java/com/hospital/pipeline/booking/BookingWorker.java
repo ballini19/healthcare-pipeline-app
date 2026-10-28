@@ -1,6 +1,7 @@
 package com.hospital.pipeline.booking;
 
 import com.hospital.pipeline.config.JmsConfig;
+import com.hospital.pipeline.domain.Appointment;
 import com.hospital.pipeline.domain.Slot;
 import com.hospital.pipeline.domain.SlotStatus;
 import com.hospital.pipeline.insurance.InsuranceClient;
@@ -23,13 +24,15 @@ public class BookingWorker {
     private final BookingService bookingService;
     private final InsuranceClient insurance;
     private final BookingTracker tracker;
+    private final AppointmentEvents events;
 
     public BookingWorker(SlotRepository slots, BookingService bookingService,
-                         InsuranceClient insurance, BookingTracker tracker) {
+                         InsuranceClient insurance, BookingTracker tracker, AppointmentEvents events) {
         this.slots = slots;
         this.bookingService = bookingService;
         this.insurance = insurance;
         this.tracker = tracker;
+        this.events = events;
     }
 
     @JmsListener(destination = JmsConfig.BOOKING_QUEUE)
@@ -50,9 +53,10 @@ public class BookingWorker {
                 reject(m, "Insurance verification failed for " + m.insuranceId());
                 return;
             }
-            bookingService.book(m);
+            Appointment booked = bookingService.book(m);
             tracker.update(ref, "CONFIRMED", "Appointment confirmed for " + slot.startTime.format(WHEN)
                     + " with " + slot.doctor.name, m.slotId(), m.patientName());
+            events.published(booked);
         } catch (OptimisticLockingFailureException e) {
             log.info("{} lost the race for slot {}: {}", ref, m.slotId(), e.getClass().getSimpleName());
             rejectTaken(m, slots.findById(m.slotId()).orElse(null),

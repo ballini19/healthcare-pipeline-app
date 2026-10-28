@@ -23,6 +23,9 @@ public class Appointment {
     public String insuranceId;
     public String reason;
 
+    /** Login of the patient who booked; null for demo traffic. */
+    public String patientUsername;
+
     @ManyToOne(optional = false)
     public Slot slot;
 

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patient portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/patient.html">Appointments &amp; Lab Results</a>
+  <div class="who"><span>Signed in as <b id="whoName"></b></span> <button class="btn quiet" id="logout" type="button">Sign out</button></div>
+</header>
+
+<main>
+  <div class="pagehead">
+    <h1>Patient portal</h1>
+    <p>Choose a doctor and a time. You get an answer straight away, and the doctor sees the booking as soon as it is confirmed.</p>
+  </div>
+
+  <nav class="tabs" aria-label="Sections">
+    <button data-view="book" aria-current="page">Book a visit</button>
+    <button data-view="mine">My appointments</button>
+  </nav>
+
+  <section id="book" class="view">
+    <div class="two">
+      <form id="bookForm" autocomplete="off">
+        <label>Doctor <select id="doctor" required></select></label>
+        <label>Time slot <select id="slot" required></select></label>
+        <label>Patient name <input id="name" required maxlength="80"></label>
+        <label>Email <input id="email" type="email" required></label>
+        <label>Insurance id
+          <input id="ins" required maxlength="40" value="INS-20481">
+          <small>For a demo: <b>INV-1</b> is refused by the insurer, <b>SLOW-1</b> answers slowly.</small>
+        </label>
+        <label>Reason for visit <input id="reason" maxlength="200" value="Routine check-up"></label>
+        <button class="btn" type="submit" id="bookBtn">Request appointment</button>
+      </form>
+
+      <div class="card" id="result" aria-live="polite">
+        <h2 id="resTitle">Your confirmation</h2>
+        <p id="bookEmpty" class="muted">Fill in the form and request an appointment. Your confirmation will appear here.</p>
+        <div id="resBody" hidden>
+          <p id="resWhen" class="when"></p>
+          <p id="resRef" class="muted"></p>
+        </div>
+        <details id="tech" hidden>
+          <summary>Technical details</summary>
+          <ol id="bookLog" class="log"></ol>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="mine" class="view" hidden>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr><th>Reference</th><th>Doctor</th><th>When</th><th>Reason</th></tr></thead>
+        <tbody id="mineRows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script src="common.js"></script>
+<script src="patient.js"></script>
+</body>
+</html>

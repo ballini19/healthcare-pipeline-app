@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doctor portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/doctor.html">Appointments &amp; Lab Results</a>
+  <div class="who"><span>Signed in as <b id="whoName"></b></span> <button class="btn quiet" id="logout" type="button">Sign out</button></div>
+</header>
+
+<main>
+  <div class="pagehead">
+    <h1 id="docTitle">Doctor portal</h1>
+    <p id="docSub"></p>
+  </div>
+
+  <nav class="tabs" aria-label="Sections">
+    <button data-view="appts" aria-current="page">My appointments</button>
+    <button data-view="lab">Lab results</button>
+    <button data-view="race">Concurrency test</button>
+  </nav>
+
+  <!-- Appointments, updated live -->
+  <section id="appts" class="view">
+    <div class="tiles">
+      <div class="tile good"><b id="tBooked">0</b><span>Appointments booked</span></div>
+      <div class="tile"><b id="tOpen">0</b><span>Open slots</span></div>
+      <div class="tile"><b id="tNext">None</b><span>Next appointment</span></div>
+    </div>
+    <div class="sectionhead">
+      <h2>Your schedule</h2>
+      <span class="live" id="live"><i></i><span id="liveText">Connecting</span></span>
+    </div>
+    <div class="tablewrap scroll">
+      <table class="tbl">
+        <thead><tr><th>When</th><th>Patient</th><th>Reason</th><th>Reference</th></tr></thead>
+        <tbody id="apptRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Lab results -->
+  <section id="lab" class="view" hidden>
+    <p class="muted" style="max-width:60ch;margin-bottom:24px">The nightly job reads an analyzer file, checks and triages each row, and saves them in chunks of 50. Bad rows are skipped and logged. Critical values go out as alerts on a priority topic.</p>
+    <div class="controls">
+      <button class="btn" id="labGo" type="button">Run the batch on a new analyzer feed</button>
+      <label class="file">Or upload a CSV <input id="labFile" type="file" accept=".csv"></label>
+      <a href="sample/lab_feed_sample.csv" download>Download sample CSV</a>
+      <span id="labState" class="muted"></span>
+    </div>
+    <div class="tiles four" id="labTiles">
+      <div class="tile"><b data-k="read">0</b><span>Rows read</span></div>
+      <div class="tile good"><b data-k="written">0</b><span>Saved</span></div>
+      <div class="tile bad"><b data-k="skipped">0</b><span>Skipped</span></div>
+      <div class="tile"><b data-k="commits">0</b><span>Chunk commits</span></div>
+    </div>
+    <div class="two" style="margin-top:36px">
+      <div>
+        <h2>Results
+          <select id="sevFilter" aria-label="Filter by severity">
+            <option value="">All</option><option>CRITICAL</option><option>ABNORMAL</option><option>NORMAL</option>
+          </select>
+        </h2>
+        <div class="tablewrap scroll" style="margin-top:12px">
+          <table class="tbl">
+            <thead><tr><th>Patient</th><th>Test</th><th>Value</th><th>Range</th><th>Result</th></tr></thead>
+            <tbody id="labRows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h2>Critical alerts <small id="alertTotal" class="muted"></small></h2>
+        <ul id="alertList" class="rows"></ul>
+        <h2 style="margin-top:32px">Skipped rows</h2>
+        <ul id="skipList" class="rows mono"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Concurrency test -->
+  <section id="race" class="view" hidden>
+    <p class="muted" style="max-width:60ch;margin-bottom:24px">Fires simultaneous requests for the same slot. Every request is accepted instantly. Optimistic locking lets exactly one reach the database.</p>
+    <div class="controls">
+      <label>Doctor <select id="raceDoctor"></select></label>
+      <label>Requests <input id="raceCount" type="number" min="2" max="200" value="30"></label>
+      <button class="btn" id="raceGo" type="button">Send them all at once</button>
+    </div>
+    <div class="tiles four" id="raceTiles">
+      <div class="tile"><b data-k="QUEUED">0</b><span>Queued</span></div>
+      <div class="tile"><b data-k="PROCESSING">0</b><span>Processing</span></div>
+      <div class="tile good"><b data-k="CONFIRMED">0</b><span>Confirmed</span></div>
+      <div class="tile bad"><b data-k="REJECTED">0</b><span>Rejected</span></div>
+    </div>
+    <p id="raceNote" class="muted" style="margin:16px 0">Waiting for a run.</p>
+    <ul id="raceList" class="rows"></ul>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="common.js"></script>
+<script src="doctor.js"></script>
+</body>
+</html>

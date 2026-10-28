@@ -11,6 +11,14 @@ Spring Boot 3 / Java 21 backend with a small web UI.
 | Critical alerts on a priority topic | `LabProcessor` publishes to topic `labAlerts`, consumed by `AlertService` |
 | Entity inheritance, named HQL query | `LabResult` / `BloodTestResult` / `UrineTestResult`, `@NamedQuery LabResult.findBySeverity` |
 
+## Portals and logins
+
+The landing page has two sign-ins: **Doctors** and **Patients**. Open them in two browser tabs (each tab keeps its own login).
+
+- Doctor portal: own appointments (updated live over server-sent events when a patient books), lab results, concurrency test.
+- Patient portal: book a visit, see own appointments.
+- Logins are listed in `password.txt` (demo accounts: three doctors and one patient). The app reads that file on startup and stores only BCrypt hashes. Change the passwords there before any real use; the file is committed on purpose for the class demo.
+
 ## Run
 
 ```bash
@@ -33,6 +41,8 @@ Expected result: 305 read, 300 saved, 5 skipped, 7 chunk commits.
 
 ## Key endpoints
 
-- `POST /api/appointments` returns 202 with a reference id; `GET /api/appointments/{ref}` shows progress
+- `POST /api/auth/login` returns a token; send it as `Authorization: Bearer <token>`
+- `POST /api/appointments` (patients) returns 202 with a reference id; `GET /api/appointments/{ref}` shows progress
+- `GET /api/doctor/overview` and `/api/doctor/stream` (doctors), `GET /api/my/appointments` (patients)
 - `POST /api/demo/race?slotId=&count=` fires many requests at one slot
 - `POST /api/lab/run` runs the batch (optional CSV upload); `GET /api/lab/status`, `/results`, `/alerts`

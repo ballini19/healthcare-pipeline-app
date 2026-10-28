@@ -35,3 +35,7 @@ Username is the GitHub username; password is the token.
 - Memory is capped for the 512 MB limit (see `JAVA_TOOL_OPTIONS` in the Dockerfile). Measured peak locally: about 306 MB.
 - `/h2-console` is enabled for demos. Turn it off for anything public and permanent
   (`spring.h2.console.enabled=false`).
+
+## Logins
+
+`password.txt` holds the demo logins and is copied into the Docker image. Anyone who can read the public repo can read these passwords, so treat the deployed demo as open. For anything beyond a class demo, change them and keep the file out of the repo.

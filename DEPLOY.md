@@ -18,7 +18,7 @@ Username is the GitHub username; password is the token.
 
 1. Sign up at https://render.com with GitHub and allow access to the repo.
 2. New, Blueprint, choose the repo, then Apply. Render reads `render.yaml` and builds the `Dockerfile` (first build takes 5 to 10 minutes).
-   Without the blueprint: New, Web Service, pick the repo, Runtime Docker, Instance type Free, Health check path `/api/stats`.
+   Without the blueprint: New, Web Service, pick the repo, Runtime Docker, Instance type Free, Health check path `/`.
 3. When the build finishes the service shows a link like `https://healthcare-pipeline.onrender.com`.
 
 ## 3. Check it

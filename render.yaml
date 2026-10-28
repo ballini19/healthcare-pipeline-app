@@ -3,4 +3,4 @@ services:
     name: healthcare-pipeline
     runtime: docker
     plan: free
-    healthCheckPath: /api/stats
+    healthCheckPath: /
